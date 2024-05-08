@@ -151,7 +151,7 @@ loader.load('/_deguchi/3d/pen.glb', function (gltf) {
       z: -Math.PI / 5,
     },'tl03')
     .to(model.position, {
-      z: 450,
+      z: 350,
       x: 300,
       y: 200,
     },'tl03')
