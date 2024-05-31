@@ -80,7 +80,7 @@ scene.add(directionalLight);
 
 // GLTF Loader
 const loader = new GLTFLoader();
-loader.load('/_deguchi/3d/friction.glb', function (gltf) {
+loader.load('/three-pen/3d/friction.glb', function (gltf) {
   const model = gltf.scene;
   model.scale.set(120, 120, 120);
   scene.add(model);
