@@ -79,8 +79,10 @@ directionalLight.position.set(0, 1, 1).normalize();
 scene.add(directionalLight);
 
 // GLTF Loader
+let mixer, actions = []
+let canClick = true;
 const loader = new GLTFLoader();
-loader.load('/three-pen/3d/friction.glb', function (gltf) {
+loader.load('/three-animation//3d/box.glb', function (gltf) {
   const model = gltf.scene;
   model.scale.set(120, 120, 120);
   scene.add(model);
@@ -93,7 +95,19 @@ loader.load('/three-pen/3d/friction.glb', function (gltf) {
   // model.position.x = -150
   model.rotation.z = -Math.PI / 5;
 
+  mixer = new THREE.AnimationMixer(gltf.scene);
+  
+  gltf.animations.forEach((clip) => {
+    const action = mixer.clipAction(clip);
+    action.loop = THREE.LoopOnce; // アニメーションを1回だけ再生する
+    action.clampWhenFinished = true; // アニメーションが終了した後に最後のフレームで停止する
+    actions.push(action);
+  });
 
+  mixer.addEventListener('finished', function() {
+    canClick = true; // アニメーションが終了したらクリックを有効にする
+  });
+  
   // Animate
   // tl01
   const tl01 = gsap.timeline({
@@ -186,11 +200,23 @@ loader.load('/three-pen/3d/friction.glb', function (gltf) {
   
     // Render
     renderer.render(scene, camera);
+    
+    mixer.update(0.01);
   
     window.requestAnimationFrame(animate);
   };
   animate();
 
+});
+
+document.addEventListener('click', function() {
+  if (canClick && actions.length > 0) {
+    canClick = false; // アニメーションが再生されている間はクリックを無効にする
+    actions.forEach(action => {
+      action.reset(); // アクションをリセットして最初から再生
+      action.play(); // アニメーションを再生
+    });
+  }
 });
 
 
@@ -214,3 +240,5 @@ window.addEventListener("resize", () => {
 
 // const lightHelper = new THREE.SpotLightHelper(directionalLight);
 // scene.add(lightHelper);
+
+
